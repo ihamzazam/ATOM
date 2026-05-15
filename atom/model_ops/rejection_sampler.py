@@ -9,8 +9,14 @@ from torch import nn
 
 ATOM_ENABLE_RELAXED_MTP = envs.ATOM_ENABLE_RELAXED_MTP
 if ATOM_ENABLE_RELAXED_MTP:
-    RELAXED_TOP_N = 10
-    RELAXED_DELTA = 0.6
+    # Defaults match the historical hard-coded values upstream uses for
+    # DeepSeek-V3/R1 FP8.  For other model/quantization combos the accept-rate
+    # vs accuracy tradeoff sits at a different operating point — e.g.
+    # DSR1-0528 MXFP4 wants top=15 / delta=0.30 to keep GSM8K above the
+    # bounty gate while preserving the accept-rate gain.  Expose both as env
+    # vars so users don't have to fork the source for per-model tuning.
+    RELAXED_TOP_N = envs.ATOM_RELAXED_MTP_TOP_N
+    RELAXED_DELTA = envs.ATOM_RELAXED_MTP_DELTA
 else:
     RELAXED_TOP_N = 1
     RELAXED_DELTA = 0.0

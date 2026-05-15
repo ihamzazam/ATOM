@@ -102,6 +102,13 @@ environment_variables: dict[str, Callable[[], Any]] = {
     "ATOM_ENABLE_RELAXED_MTP": lambda: (
         os.getenv("ATOM_ENABLE_RELAXED_MTP", "0").lower() == "1"
     ),
+    # Width and threshold of the relaxed-MTP draft acceptance.  Defaults
+    # match the historical hard-coded values; per-model tuning needs no
+    # source edit — set the env vars before launching the server.
+    # DeepSeek-R1-0528 MXFP4 + MTP on MI355X benefits from top=15 / delta=0.30
+    # at CONC=4 (passes GSM8K 0.93 gate with the tighter acceptance band).
+    "ATOM_RELAXED_MTP_TOP_N": lambda: int(os.getenv("ATOM_RELAXED_MTP_TOP_N", "10")),
+    "ATOM_RELAXED_MTP_DELTA": lambda: float(os.getenv("ATOM_RELAXED_MTP_DELTA", "0.6")),
     # --- Gradient Control ---
     # Enable gradient tracking on model parameters.  Default "0" (disabled)
     # is correct for inference; set to "1" only for training / fine-tuning.
